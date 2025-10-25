@@ -1,0 +1,42 @@
+config/secrets.json
+agent/.env
+.env
+
+# ========================
+# Python Specific Files
+# ========================
+
+# Byte-code and compiled files
+__pycache__/
+*.pyc
+*.pyd
+*.so
+
+# Virtual environment files
+venv/
+.venv/
+env/
+
+# Package management
+*.egg-info/
+build/
+dist/
+
+# ========================
+# Operating System & IDE
+# ========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ========================
+# Agent-Specific Files
+# ========================
+
+# Dynamic script creation folder (set up by systemd)
+/var/agent/scripts/
+
+# Logs and temporary files
+*.log
+*.tmp
