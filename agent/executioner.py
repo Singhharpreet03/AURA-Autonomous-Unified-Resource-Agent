@@ -48,7 +48,13 @@ def execute_encrypted_script(script_path: str) -> dict:
         return {"status": "error", "message": "Failed to decrypt script content."}
 
     # 3. Create a temporary, unencrypted executable script for execution
-    temp_script_path = f"/tmp/agent_exec_{os.getpid()}_{os.urandom(4).hex()}.sh"
+    # uncomment to create a temporary file at /tmp for linux
+    #temp_script_path = f"/tmp/agent_exec_{os.getpid()}_{os.urandom(4).hex()}.sh"
+    
+
+
+    # for testing
+    temp_script_path = "Scripts_folder/temp.sh"
     
     try:
         with open(temp_script_path, 'w') as f:
@@ -57,30 +63,30 @@ def execute_encrypted_script(script_path: str) -> dict:
         # Make it executable
         os.chmod(temp_script_path, 0o700) # Only owner (root) can read/write/execute
 
-        # 4. Execute the temporary script (as root)
-        result = subprocess.run(
-            [temp_script_path],
-            capture_output=True,
-            text=True,
-            check=False # Do not raise error, handle it below
-        )
+        # # 4. Execute the temporary script (as root)
+        # result = subprocess.run(
+        #     [temp_script_path],
+        #     capture_output=True,
+        #     text=True,
+        #     check=False
+        # )
 
         # 5. Return results
-        if result.returncode == 0:
-            return {"status": "success", "stdout": result.stdout}
-        else:
-            return {"status": "failed", "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
+        # if result.returncode == 0:
+        #     return {"status": "success", "stdout": result.stdout}
+        # else:
+        #     return {"status": "failed", "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
 
     except Exception as e:
         return {"status": "error", "message": f"Execution failed: {e}"}
 
-    finally:
-        # 6. Cleanup the temporary script
-        if os.path.exists(temp_script_path):
-            os.remove(temp_script_path)
+    # finally:
+    #     # 6. Cleanup the temporary script
+    #     if os.path.exists(temp_script_path):
+    #         os.remove(temp_script_path)
             
-        # Optional: Remove the encrypted file after a successful one-time execution
-        # os.remove(script_path)
+    #     Optional: Remove the encrypted file after a successful one-time execution
+    #     os.remove(script_path)
 
 
 if __name__ == '__main__':
@@ -104,4 +110,4 @@ if __name__ == '__main__':
         with open(full_path, 'r') as f:
             print("\n--- Saved Script Content ---")
             print(f.read())
-    
+    execute_encrypted_script("EncryptedScripts_folder/1-script.sh")
