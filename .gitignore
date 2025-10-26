@@ -3,7 +3,14 @@ agent/.env
 .env
 agent/secret.key
 secret.key
-agent/Script-folder/*.*
+
+agent/Script-folder/
+
+
+EncryptedScripts_folder/
+
+Scripts_folder/
+
 # ========================
 # Python Specific Files
 # ========================
