@@ -104,3 +104,4 @@ if __name__ == '__main__':
         with open(full_path, 'r') as f:
             print("\n--- Saved Script Content ---")
             print(f.read())
+    
