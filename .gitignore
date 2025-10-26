@@ -1,7 +1,8 @@
 config/secrets.json
 agent/.env
 .env
-
+agent/secret.key
+secret.key
 agent/Script-folder/*.*
 # ========================
 # Python Specific Files
