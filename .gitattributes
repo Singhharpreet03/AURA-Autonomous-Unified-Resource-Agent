@@ -1,0 +1,9 @@
+# Ensure all shell scripts use LF line endings (required for Linux execution)
+*.sh text eol=lf
+install.sh text eol=lf
+
+# You can also force Python scripts to use LF, though often less critical
+*.py text eol=lf
+
+# For everything else, treat text files as auto-converting (safe default)
+* text=auto

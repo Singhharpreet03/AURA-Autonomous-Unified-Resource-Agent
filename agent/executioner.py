@@ -11,9 +11,9 @@ _GEMINI_CLIENT = None
 # --- INITIALIZATION LOGIC (Runs once when the module is imported) ---
 load_dotenv()
 try:
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("LLM_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY not found in environment variables.")
+        raise ValueError("LLM_API_KEY not found in environment variables.")
         
     patcher._GEMINI_CLIENT = genai.Client(api_key=api_key)
     print("Gemini Client initialized successfully!")

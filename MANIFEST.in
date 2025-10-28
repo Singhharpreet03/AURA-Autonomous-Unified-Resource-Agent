@@ -1,0 +1,5 @@
+# Include your .env template so users know what variables to set
+include .env_example
+
+# Include any documentation or license files
+include README.md
