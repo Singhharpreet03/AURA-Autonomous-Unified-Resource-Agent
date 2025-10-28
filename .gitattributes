@@ -7,3 +7,7 @@ install.sh text eol=lf
 
 # For everything else, treat text files as auto-converting (safe default)
 * text=auto
+
+
+# service files 
+*.service text eol=lf
