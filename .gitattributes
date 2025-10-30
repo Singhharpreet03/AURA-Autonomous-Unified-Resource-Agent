@@ -4,7 +4,7 @@ install.sh text eol=lf
 
 # You can also force Python scripts to use LF, though often less critical
 *.py text eol=lf
-
+agent/*.py text eol=lf
 # For everything else, treat text files as auto-converting (safe default)
 * text=auto
 

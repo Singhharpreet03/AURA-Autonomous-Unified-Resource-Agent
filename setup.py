@@ -11,10 +11,10 @@ setup(
         'google-genai',
         'cryptography',
     ],
-    # to change my agent serivce start service endpoint
+    # to change my agent start service endpoint
     entry_points={
         'console_scripts': [
-            'aura-agent-start = my_agent.agent_service:start_server', 
+            'aura-agent-start = agent.server:aura_service', 
         ],
     },
     author='Harpreet Singh',
