@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import subprocess
-from . import cryptographic
-from . import patcher
+import cryptographic
+import patcher
 
 _GEMINI_CLIENT = None
 

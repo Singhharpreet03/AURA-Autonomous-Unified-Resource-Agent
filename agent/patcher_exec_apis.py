@@ -4,9 +4,9 @@ import os
 import uuid
 import subprocess
 
-from . import executioner
-from . import patcher
-from . import cryptographic
+import executioner
+import patcher
+# import cryptographic
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
@@ -20,14 +20,14 @@ from typing import List, Literal, Dict, Any, Optional
 
 # Placeholder functions for your core logic modules
 # NOTE: In a real environment, these would be 'from agent import gemini_script_generator' etc.
-def generate_script_from_prompt(*args, **kwargs) -> str:
-    # Dummy implementation: SUCCESS or ERROR
-    # Simulate a successful script creation and encryption
-    return "SUCCESS: Script generated and saved." 
+# def patcher.generate_script_from_prompt(*args, **kwargs) -> str:
+#     # Dummy implementation: SUCCESS or ERROR
+#     # Simulate a successful script creation and encryption
+#     return "SUCCESS: Script generated and saved." 
 
-def execute_encrypted_script(path: str) -> Dict[str, Any]:
-    # Dummy implementation: Simulates execution result structure
-    return {"status": "success", "stdout": "Patch applied successfully.", "stderr": "", "code": 0}
+# def executioner.execute_encrypted_script(path: str) -> Dict[str, Any]:
+#     # Dummy implementation: Simulates execution result structure
+#     return {"status": "success", "stdout": "Patch applied successfully.", "stderr": "", "code": 0}
 
 
 # --- CONFIGURATION ---
@@ -116,8 +116,8 @@ async def create_workflow(request: WorkflowCreateRequest):
     
     # Calls your actual script generation/saving/encryption function
     # You would replace the placeholder call with: 
-    # result_message = gemini_script_generator.generate_script_from_prompt(...)
-    result_message = generate_script_from_prompt(
+    # result_message = gemini_script_generator.patcher.generate_script_from_prompt(...)
+    result_message = patcher.generate_script_from_prompt(
         instructions=request.instructions,
         output_path=output_path,
         script_type=request.script_type
@@ -146,8 +146,8 @@ async def execute_workflow(workflow_id: str):
     
     # Calls your execution function
     # You would replace the placeholder call with: 
-    # execution_data = executioner.execute_encrypted_script(workflow_path)
-    execution_data = execute_encrypted_script(workflow_path)
+    # execution_data = executioner.executioner.execute_encrypted_script(workflow_path)
+    execution_data = executioner.execute_encrypted_script(workflow_path)
     
     return ExecutionResult(
         workflow_id=workflow_id,
