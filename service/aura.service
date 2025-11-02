@@ -1,0 +1,36 @@
+[Unit]
+Description=My Root-Privileged Execution Agent
+After=network.target
+
+[Service]
+# --- EXECUTION ---
+# This line is CRITICAL: It ensures the agent runs with full root permissions.
+User=root
+Group=root
+
+# CRITICAL: Use the full path to your Python interpreter and the installed entry point.
+# 'myagent-start' is the command defined in your setup.py 'console_scripts'.
+# We use 'bash -c' to ensure the environment path is loaded correctly, 
+# but often simply calling the installed executable works fine too.
+# Assuming Python's executable directory is in the root's PATH, this should work:
+ExecStart=/usr/local/bin/myagent-start 
+
+# Alternatively, if you installed in a venv or need explicit python invocation:
+# ExecStart=/usr/bin/python3 -m my_agent.agent_service
+
+# Directory where the service should execute (useful for relative path resolution)
+WorkingDirectory=/opt/myagent
+
+# --- RELIABILITY ---
+# Always restart the service if it crashes unexpectedly
+Restart=always
+# Wait 5 seconds before attempting to restart
+RestartSec=5s
+
+# --- SECURITY & LOGGING ---
+# Standard output goes to the systemd journal (viewable via journalctl)
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
