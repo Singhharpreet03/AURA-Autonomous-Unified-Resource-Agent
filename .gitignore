@@ -1,0 +1,53 @@
+# Environment variables
+.env
+.env.example
+
+# Keys and sensitive files
+keys/
+*.key
+*.pem
+*.p12
+
+# Model files
+models/
+*.pkl
+myenv/
+
+# Data files
+*.json
+metrics.json
+baseline.json
+simulated_deployment_log.json
+# Backup files
+backups/
+*.tar.gz.age
+
+# Encrypted scripts
+EncryptedScripts_folder/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+patcher_exec_apis.py
+requirements.txt
+alert_api_service.py
