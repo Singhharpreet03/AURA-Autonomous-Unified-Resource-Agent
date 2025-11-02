@@ -12,6 +12,8 @@
 
 **AURA-Agent** is the powerful backend engine of the AURA (Autonomous Unified Resource Agent) system - a revolutionary IT infrastructure management platform that transforms traditional reactive "break-fix" IT operations into proactive, self-healing autonomous systems.
 
+[AURA cloud console](https://github.com/Singhharpreet03/AURA-Cloud-Console/tree/main) : https://github.com/Singhharpreet03/AURA-Cloud-Console/tree/main 
+
 ###  Mission Statement
 Transform IT infrastructure management from manual, reactive operations to intelligent, autonomous, and predictive management through AI-powered agents.
 
