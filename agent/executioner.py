@@ -1,23 +1,31 @@
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
-from google.generativeai import types
+#import google.generativeai as genai
+#from google.generativeai import types
+from google import genai                         # <--- UPDATED
+from google.genai import types
 import subprocess
 import cryptographic
 import patcher
-
+import pathlib
 _GEMINI_CLIENT = None
 
 # --- INITIALIZATION LOGIC (Runs once when the module is imported) ---
-load_dotenv()
+#load_dotenv()
+
+
+SCRIPT_DIR = pathlib.Path(__file__).parent
+ENV_PATH = SCRIPT_DIR / ".env" # This assumes .env is in the same directory as patcher.py
+
+# --- INITIALIZATION LOGIC (Runs once when the module is imported) ---
+load_dotenv(dotenv_path=ENV_PATH)
+
 try:
     api_key = os.getenv("LLM_API_KEY")
     if not api_key:
         raise ValueError("LLM_API_KEY not found in environment variables.")
-        
     patcher._GEMINI_CLIENT = genai.Client(api_key=api_key)
     print("Gemini Client initialized successfully!")
-    
 except Exception as e:
     # Set the client to None on failure, and handle the error gracefully
     patcher._GEMINI_CLIENT = None
@@ -41,7 +49,7 @@ def execute_encrypted_script(script_path: str) -> dict:
         return {"status": "error", "message": f"Script file not found: {script_path}"}
     except Exception as e:
         return {"status": "error", "message": f"Failed to read file: {e}"}
-
+    
     # 2. Decrypt the content
     decrypted_script_content = cryptographic.decrypt_data(encrypted_content)
     if decrypted_script_content is None:
@@ -64,30 +72,27 @@ def execute_encrypted_script(script_path: str) -> dict:
         os.chmod(temp_script_path, 0o700) # Only owner (root) can read/write/execute
 
         # # 4. Execute the temporary script (as root)
-        # result = subprocess.run(
-        #     [temp_script_path],
-        #     capture_output=True,
-        #     text=True,
-        #     check=False
-        # )
+        result = subprocess.run(
+             [temp_script_path],
+             capture_output=True,
+             text=True,
+             check=False
+        )
 
         # 5. Return results
-        # if result.returncode == 0:
-        #     return {"status": "success", "stdout": result.stdout}
-        # else:
-        #     return {"status": "failed", "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
-
+        if result.returncode == 0:
+            return {"status": "success", "stdout": result.stdout}
+        else:
+            return {"status": "failed", "stdout": result.stdout, "stderr": result.stderr, "code": result.returncode}
     except Exception as e:
         return {"status": "error", "message": f"Execution failed: {e}"}
 
-    # finally:
+    #finally:
     #     # 6. Cleanup the temporary script
-    #     if os.path.exists(temp_script_path):
-    #         os.remove(temp_script_path)
-            
+    #    if os.path.exists(temp_script_path):
+    #        os.remove(temp_script_path)
     #     Optional: Remove the encrypted file after a successful one-time execution
-    #     os.remove(script_path)
-
+    #    os.remove(script_path)
 
 if __name__ == '__main__':
     # Define where the agent stores its scripts

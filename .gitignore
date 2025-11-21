@@ -24,6 +24,9 @@ backups/
 
 # Encrypted scripts
 EncryptedScripts_folder/
+agent/EncryptedScripts_folder/
+agent/Scripts_folder/
+aura-runtime/
 
 # Python
 __pycache__/
@@ -36,7 +39,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+*.whl
 # IDE
 .vscode/
 .idea/

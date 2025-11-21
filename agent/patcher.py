@@ -1,12 +1,26 @@
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
-from google.generativeai import types
+#import google.generativeai as genai
+#from google.generativeai import types
+from google import genai                         # <--- UPDATED
+from google.genai import types
+import pathlib
+import cryptographic
 
 _GEMINI_CLIENT = None
 
 # --- INITIALIZATION LOGIC (Runs once when the module is imported) ---
-load_dotenv()
+#load_dotenv()
+
+
+SCRIPT_DIR = pathlib.Path(__file__).parent
+ENV_PATH = SCRIPT_DIR / ".env" # This assumes .env is in the same directory as patcher.py
+
+# --- INITIALIZATION LOGIC (Runs once when the module is imported) ---
+load_dotenv(dotenv_path=ENV_PATH)
+
+
+
 try:
     api_key = os.getenv("LLM_API_KEY")
     if not api_key:
@@ -87,19 +101,34 @@ def generate_script_from_prompt(
         else:
             # Fallback
             code_content = generated_text
-        
-        # 4. Save the generated script to the specified path
         try:
-            # Ensure the directory exists before writing
+    # 1. Encrypt the content
+            encrypted_content = cryptographic.encrypt_data(code_content)
+            if encrypted_content is None:
+        # Handle the case where encryption failed (key missing, initialization error)
+                return "ERROR: Encryption failed. Check cipher initialization and key."
+    # Ensure the directory exists before writing
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            
-            with open(output_path, 'w') as f:
-                f.write(code_content)
-                
-            return f"SUCCESS: Script generated and saved to: {output_path}"
-            
+    # 2. Write the encrypted BYTES to the file
+    # CRITICAL CHANGE: Use 'wb' (write bytes) mode!
+            with open(output_path, 'wb') as f:
+                f.write(encrypted_content)
+            return f"SUCCESS: Encrypted script generated and saved to: {output_path}"
         except Exception as file_error:
+    # This block now catches errors related to os.makedirs or the file I/O (opening/writing)
             return f"ERROR: Failed to save script to {output_path}: {file_error}"
+        # 4. Save the generated script to the specified path
+#        try:
+            # Ensure the directory exists before writing
+#            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            
+#            with open(output_path, 'w') as f:
+#                f.write(code_content)
+                
+#            return f"SUCCESS: Script generated and saved to: {output_path}"
+            
+#        except Exception as file_error:
+#            return f"ERROR: Failed to save script to {output_path}: {file_error}"
 
 
     except Exception as api_error:

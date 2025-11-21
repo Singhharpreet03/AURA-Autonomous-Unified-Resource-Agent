@@ -2,6 +2,7 @@ import json, pathlib, asyncio, time, threading
 from collections import deque
 import logging
 import os
+import sys
 from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,8 +16,10 @@ import psycopg2
 from dotenv import load_dotenv
 import uuid
 import subprocess
+import pathlib
+from starlette import status
 
-load_dotenv()
+#load_dotenv()
 import executioner
 import patcher
 import cryptographic
@@ -28,6 +31,13 @@ import backup
 import restore
 import alert
 
+# load env
+
+SCRIPT_DIR = pathlib.Path(__file__).parent
+ENV_PATH = SCRIPT_DIR / ".env" # This assumes .env is in the same directory as patcher.py
+
+# --- INITIALIZATION LOGIC (Runs once when the module is imported) ---
+load_dotenv(dotenv_path=ENV_PATH)
 # ---- config ---------------------------------------------------------------
 ROOT = pathlib.Path(os.getenv('ROOT_DIR', 'demo/app'))
 BASELINE = pathlib.Path(os.getenv('BASELINE_FILE', 'baseline.json'))
@@ -43,6 +53,18 @@ pipeline_lock = threading.Lock()
 main_loop = None
 drift_handler = None
 observer = None
+
+# ---- logging -------------------------------------------------------
+logging.basicConfig(
+    level=logging.INFO, # Set the minimum logging level
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+
+logger = logging.getLogger("alert_api")
+executioner_logger = logging.getLogger("executioner")
+# Define a logger for the API endpoint (for clarity)
+api_logger = logging.getLogger("fastapi_endpoint")
 
 # ---- Integrated Drift Handler ---------------------------------------------
 class DriftHandler(FileSystemEventHandler):
@@ -335,10 +357,6 @@ async def live_alerts(websocket: WebSocket):
 
 
 #--------------------------intelligent alerting service -------------------------
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("alert_api")
 
 
 DB_HOST = os.environ.get('DB_HOST', 'localhost')
@@ -837,10 +855,12 @@ async def create_workflow(request: WorkflowCreateRequest):
 @app.post("/api/v1/workflow/patch/{workflow_id}", response_model=ExecutionResult)
 async def execute_workflow(workflow_id: str):
     """Executes a workflow (decrypts and runs the script)."""
-    
+    api_logger.info(f"--- START: Workflow execution requested for ID: {workflow_id}")
+
     workflow_path = get_workflow_path(workflow_id)
     
     if not os.path.exists(workflow_path):
+        api_logger.warning(f"Workflow file not found at path: {workflow_path}")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"Workflow ID '{workflow_id}' not found.")
     
@@ -848,7 +868,16 @@ async def execute_workflow(workflow_id: str):
     # You would replace the placeholder call with: 
     # execution_data = executioner.executioner.execute_encrypted_script(workflow_path)
     execution_data = executioner.execute_encrypted_script(workflow_path)
-    
+    status_val = execution_data.get("status", "error")
+
+    if status_val == "success":
+        api_logger.info(f"--- SUCCESS: Workflow '{workflow_id}' executed successfully.")
+    else:
+        # Log critical errors with details for quick visibility
+        api_logger.error(
+            f"--- FAILED: Workflow '{workflow_id}' execution failed.", 
+            extra={"details": execution_data}
+        )
     return ExecutionResult(
         workflow_id=workflow_id,
         status=execution_data.get("status", "error"),

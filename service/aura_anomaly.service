@@ -13,14 +13,8 @@ Group=root
 # We use 'bash -c' to ensure the environment path is loaded correctly, 
 # but often simply calling the installed executable works fine too.
 # Assuming Python's executable directory is in the root's PATH, this should work:
-#ExecStart=/home/mirai/aura/AURA-Autonomous-Unified-Resource-Agent/aura-runtime/bin/
+ExecStart=/home/mirai/aura/AURA-Autonomous-Unified-Resource-Agent/aura-runtime/bin/python3 anomaly_detection_service.py
 
-
-ExecStart=/home/harpreet/aura/AURA-Autonomous-Unified-Resource-Agent/aura-runtime/bin/gunicorn \
-    --workers 4 \
-    --bind 0.0.0.0:8000 \
-    --worker-class uvicorn.workers.UvicornWorker \
-    fast_api_all:app
 # Alternatively, if you installed in a venv or need explicit python invocation:
 # ExecStart=/usr/bin/python3 -m my_agent.agent_service
 
